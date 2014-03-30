@@ -1,0 +1,3 @@
+[submodule "c++/lib/bugeye"]
+	path = c++/lib/bugeye
+	url = git@github.com:Munkei/BugEye.git
