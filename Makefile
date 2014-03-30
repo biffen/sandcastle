@@ -1,8 +1,8 @@
-SUBDIRS = c++
+SUBDIRS = c++ perl5
 
-subdirs: $(SUBDIRS)
+subdirs : $(SUBDIRS)
 
-$(SUBDIRS):
+$(SUBDIRS) :
 	$(MAKE) -C $@
 
-.PHONY: subdirs $(SUBDIRS)
+.PHONY : subdirs $(SUBDIRS)
