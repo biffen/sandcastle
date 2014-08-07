@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# This file is meant to be placed in `/etc/grub.d/` (and made executable).  It
+# will look for `.iso` files in a directory and add each one to the GRUB menu.
+#
+# The directory is `/iso` by default, but can be configured with the
+# `GRUB_ISO_DIR` variable in `/etc/default/grub`.
+
+set -e
+
+(
+  source /etc/default/grub
+
+  dir=${GRUB_ISO_DIR:-/iso}
+
+  if [[ ! -d "${dir}" ]]
+  then
+    echo "No directory: ${dir}" 1>&2
+    exit
+  fi
+
+  echo 'submenu "ISO files" {'
+
+  for isofile in "${dir}/"*.iso
+  do
+    echo "Found ISO file: ${isofile}" 1>&2
+
+    menuentry=$(basename "${isofile}")
+
+    cat <<EOF
+  menuentry "${menuentry}" {
+    set isofile="${isofile}"
+    loopback loop \$isofile
+    linux (loop)/live/vmlinuz boot=live config union=aufs noswap noprompt vga=788 ip=frommedia toram=filesystem.squashfs findiso=\$isofile
+    initrd (loop)/live/initrd.img
+  }
+EOF
+  done
+
+  echo '}'
+)
